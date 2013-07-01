@@ -1,12 +1,6 @@
-mod_mono
----------
-mod_mono is an Apache 2.0+ module that provides ASP.NET functionality.
+mod_mono for Apache 2.4
 
-See INSTALL for installation instructions
-
-You can reach the maintainer at:
-	mhabersack @ novell.com
-
-More information at http://mono-project.com/Mod_mono
-
-
+example
+./autogen.sh
+./configure --prefix=/opt/mono --with-mono-prefix=/opt/mono -with-apxs=/opt/apache/bin/apxs -with-apr-config=/opt/apr/bin/apr-1-config -with-apu-config=/opt/apr/bin/apu-1-config
+./make
