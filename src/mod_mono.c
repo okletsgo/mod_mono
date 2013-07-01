@@ -388,11 +388,7 @@ inline static uid_t
 apache_get_userid ()
 {
 #ifdef HAVE_UNIXD
-	#if defined(APACHE24)
-		return ap_unixd_config.user_id;
-	#else
-		return unixd_config.user_id;
-	#endif
+	return ap_unixd_config.user_id;
 #else
 	return ap_user_id;
 #endif
@@ -402,11 +398,7 @@ inline static gid_t
 apache_get_groupid ()
 {
 #ifdef HAVE_UNIXD
-	#if defined(APACHE24)
-		return ap_unixd_config.group_id;
-	#else
-		return unixd_config.group_id;
-	#endif
+	return ap_unixd_config.group_id;
 #else
 	return ap_group_id;
 #endif
@@ -416,11 +408,7 @@ inline static const char *
 apache_get_username ()
 {
 #ifdef HAVE_UNIXD
-	#if defined(APACHE24)
-		return ap_unixd_config.user_name;
-	#else
-		return unixd_config.user_name;
-	#endif
+	return ap_unixd_config.user_name;
 #else
 	return ap_user_name;
 #endif
@@ -499,11 +487,7 @@ ensure_dashboard_initialized (module_cfg *config, xsp_data *xsp, apr_pool_t *p)
 
 #if defined (AP_NEED_SET_MUTEX_PERMS) && defined (HAVE_UNIXD)
 		DEBUG_PRINT (1, "Setting mutex permissions for %s", xsp->dashboard_lock_file);
-#if defined (APACHE24)
 		rv = ap_unixd_set_global_mutex_perms (xsp->dashboard_mutex);
-#else
-		rv = unixd_set_global_mutex_perms (xsp->dashboard_mutex);
-#endif
 		if (rv != APR_SUCCESS) {
 			ap_log_error (APLOG_MARK, APLOG_CRIT, STATCODE_AND_SERVER (rv),
 				      "Failed to set mutex permissions for %s",
@@ -867,25 +851,13 @@ request_get_server_port (request_rec *r)
 static int
 connection_get_remote_port (conn_rec *c)
 {
-#if defined(APACHE24)
 	return c->remote_addr->port;
-#else
-	apr_port_t port;
-	apr_sockaddr_port_get (&port, c->remote_addr);
-	return port;
-#endif
 }
 
 static int
 connection_get_local_port (request_rec *r)
 {
-#if defined(APACHE24)
 	return r->connection->local_addr->port;
-#else
-	apr_port_t port;
-	apr_sockaddr_port_get (&port, r->connection->local_addr);
-	return port;
-#endif
 }
 
 static const char *
@@ -2008,11 +1980,7 @@ send_initial_data (request_rec *r, apr_socket_t *sock, char auto_app)
 
 	size += sizeof (int32_t);
 
-#if defined (APACHE24)
 	info.remote_ip_len = strlen (r->connection->client_ip);
-#else
-	info.remote_ip_len = strlen (r->connection->remote_ip);
-#endif
 	size += info.remote_ip_len + sizeof (int32_t);
 
 	size += sizeof (int32_t);
@@ -2060,11 +2028,7 @@ send_initial_data (request_rec *r, apr_socket_t *sock, char auto_app)
 	i = LE_FROM_INT (i);
 	memcpy (ptr, &i, sizeof (i));
 	ptr += sizeof (int32_t);
-#if defined (APACHE24)
 	ptr += write_string_to_buffer (ptr, 0, r->connection->client_ip, info.remote_ip_len);
-#else	
-	ptr += write_string_to_buffer (ptr, 0, r->connection->remote_ip, info.remote_ip_len);
-#endif
 	i = connection_get_remote_port (r->connection);
 	i = LE_FROM_INT (i);
 	memcpy (ptr, &i, sizeof (i));
