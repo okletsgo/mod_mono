@@ -851,7 +851,7 @@ request_get_server_port (request_rec *r)
 static int
 connection_get_remote_port (conn_rec *c)
 {
-	return c->remote_addr->port;
+	return c->client_addr->port;
 }
 
 static int
